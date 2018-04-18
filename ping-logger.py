@@ -1,34 +1,18 @@
 #!/usr/bin/python3
 
+import os
 import requests
 import shutil
 import statistics
 import subprocess
 import time
+import yaml
 
-# Configure fping.
+# Load the configuration.
 
-ping_count = 10
-
-target_host_list = [
-    'example.com',
-    'example.net',
-    'example.org',
-    'FILL_IN_THIS_VALUE'
-]
-concatenated_hosts = '\n'.join(target_host_list)
-
-# Configure InfluxDB.
-
-this_host_name = 'FILL_IN_THIS_VALUE'
+config = yaml.safe_load(open(os.getenv('HOME') + '/.config/ping-logger/config.yaml'))
+concatenated_hosts = '\n'.join(config['dest_hosts'])
 timestamp = int(time.time())
-
-influxdb_connection = {
-    'server': 'https://FILL_IN_THIS_VALUE:8086',
-    'database': 'FILL_IN_THIS_VALUE',
-    'username': 'FILL_IN_THIS_VALUE',
-    'password': 'FILL_IN_THIS_VALUE'
-}
 
 # Define functions.
 
@@ -47,7 +31,7 @@ def convert_to_point(line):
     standard_deviation = "{0:.2f}".format(statistics.pstdev(pings))
     tags = [
         'ping',
-        'origin=' + this_host_name,
+        'origin=' + config['src_host_name'],
         'host=' + host
     ]
     fields = [
@@ -61,7 +45,7 @@ def convert_to_point(line):
 
 # Now run the test!
 
-fping_run = subprocess.run([shutil.which('fping'), '-C', str(ping_count), '-q', '-R'], input=concatenated_hosts, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+fping_run = subprocess.run([shutil.which('fping'), '-C', str(config['ping_count']), '-q', '-R'], input=concatenated_hosts, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
 fping_output_lines = fping_run.stdout.splitlines()
 points = []
 
@@ -74,7 +58,7 @@ for line in fping_output_lines:
 # Post the results to InfluxDB.
 
 influxdb_post = requests.post(
-    influxdb_connection['server'] + '/write?db=' + influxdb_connection['database'] + '&precision=s',
-    auth = (influxdb_connection['username'], influxdb_connection['password']),
+    config['influxdb_connection']['server'] + '/write?db=' + config['influxdb_connection']['database'] + '&precision=s',
+    auth = (config['influxdb_connection']['username'], config['influxdb_connection']['password']),
     data = '\n'.join(points)
 )

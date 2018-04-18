@@ -1,0 +1,11 @@
+influxdb_connection:
+    server: https://example.com:8086
+    database: 
+    username:
+    password:
+ping_count: 10
+src_host_name:
+dest_hosts:
+  - example.com
+  - example.net
+  - example.org
