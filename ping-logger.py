@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import requests
+import shutil
 import statistics
 import subprocess
 import time
@@ -60,7 +61,7 @@ def convert_to_point(line):
 
 # Now run the test!
 
-fping_run = subprocess.run(['/usr/sbin/fping', '-C', str(ping_count), '-q', '-R'], input=concatenated_hosts, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+fping_run = subprocess.run([shutil.which('fping'), '-C', str(ping_count), '-q', '-R'], input=concatenated_hosts, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
 fping_output_lines = fping_run.stdout.splitlines()
 points = []
 

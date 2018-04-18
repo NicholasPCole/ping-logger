@@ -4,11 +4,7 @@ This script pings a given list of hosts with `fping` and reports the measurement
 
 ## Requirements
 
-* Python 3
-  * `requests` module
-  * `statistics` module
-  * `subprocess` module
-  * `time` module
+* Python 3: `requests`, `shutils`, `statistics`, `subprocess`, and `time` modules.
 * [fping](https://fping.org/) package to run ping
 * InfluxDB server to receive and store data
 * (optional) Grafana installation to graph data
