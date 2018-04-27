@@ -31,8 +31,8 @@ def convert_to_point(line):
     standard_deviation = "{0:.2f}".format(statistics.pstdev(pings))
     tags = [
         'ping',
-        'origin=' + config['src_host_name'],
-        'host=' + host
+        'src=' + config['src_host_name'],
+        'dest=' + host
     ]
     fields = [
         'min=' + str(minimum),
