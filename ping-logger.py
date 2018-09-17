@@ -8,15 +8,9 @@ import subprocess
 import time
 import yaml
 
-# Load the configuration.
-
-config = yaml.safe_load(open(os.getenv('HOME') + '/.config/ping-logger/config.yaml'))
-concatenated_hosts = '\n'.join(config['dest_hosts'])
-timestamp = int(time.time())
-
-# Define functions.
 
 def convert_to_point(line):
+    """Convert an fping output line to InfluxDB line protocol."""
     host = line.split(':')[0].rstrip()
 
     pings = line.split(':')[1].lstrip().split(' ')
@@ -43,9 +37,20 @@ def convert_to_point(line):
 
     return(','.join(tags) + ' ' + ','.join(fields) + ' ' + str(timestamp))
 
+
+# Load the configuration.
+
+config = yaml.safe_load(open(os.getenv('HOME')
+                             + '/.config/ping-logger/config.yaml'))
+concatenated_hosts = '\n'.join(config['dest_hosts'])
+timestamp = int(time.time())
+
 # Now run the test!
 
-fping_run = subprocess.run([shutil.which('fping'), '-C', str(config['ping_count']), '-q', '-R'], input=concatenated_hosts, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+fping_run = subprocess.run([shutil.which('fping'), '-C',
+                           str(config['ping_count']), '-q', '-R'],
+                           input=concatenated_hosts, stdout=subprocess.PIPE,
+                           stderr=subprocess.STDOUT, universal_newlines=True)
 fping_output_lines = fping_run.stdout.splitlines()
 points = []
 
@@ -58,7 +63,11 @@ for line in fping_output_lines:
 # Post the results to InfluxDB.
 
 influxdb_post = requests.post(
-    config['influxdb_connection']['server'] + '/write?db=' + config['influxdb_connection']['database'] + '&precision=s',
-    auth = (config['influxdb_connection']['username'], config['influxdb_connection']['password']),
-    data = '\n'.join(points)
+    config['influxdb_connection']['server']
+    + '/write?db='
+    + config['influxdb_connection']['database']
+    + '&precision=s',
+    auth=(config['influxdb_connection']['username'],
+          config['influxdb_connection']['password']),
+    data='\n'.join(points)
 )
