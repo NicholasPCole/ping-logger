@@ -10,12 +10,16 @@ import yaml
 
 
 def convert_to_point(line):
-    """Convert an fping output line to InfluxDB line protocol."""
-    host = line.split(':')[0].rstrip()
+    """Convert an fping output line to InfluxDB line protocol.
 
-    pings = line.split(':')[1].lstrip().split(' ')
-    ping_loss = pings.count("-") / config['ping_count']
-    pings = [float(ping) for ping in pings if ping != '-']
+    An example fping output line looks like this:
+
+    example.com : 3.56 1.88 - - - 1.18 1.28 1.39 4.67 1.27
+    """
+
+    host = line.split(':')[0].rstrip()
+    responses = line.split(':')[1].lstrip().split(' ')
+    pings = [float(response) for response in responses if response != '-']
 
     if len(pings) == 0:
         return
@@ -24,6 +28,8 @@ def convert_to_point(line):
     average = "{0:.2f}".format(statistics.mean(pings))
     maximum = max(pings)
     standard_deviation = "{0:.2f}".format(statistics.pstdev(pings))
+    loss = responses.count("-") / config['ping_count']
+
     tags = [
         'ping',
         'src=' + config['src_host_name'],
@@ -34,7 +40,7 @@ def convert_to_point(line):
         'avg=' + str(average),
         'max=' + str(maximum),
         'sd=' + str(standard_deviation),
-        'loss=' + str(ping_loss)
+        'loss=' + str(loss)
     ]
 
     return(','.join(tags) + ' ' + ','.join(fields) + ' ' + str(timestamp))

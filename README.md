@@ -32,4 +32,4 @@ The following schema is used:
 * Database name: defined in `config.yaml`
 * Measurement name: `ping`
 * Tag keys: `src`, `dest`
-* Field keys: `avg`, `max`, `min`, `sd`
+* Field keys: `avg`, `loss`, `max`, `min`, `sd`
