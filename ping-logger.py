@@ -14,6 +14,7 @@ def convert_to_point(line):
     host = line.split(':')[0].rstrip()
 
     pings = line.split(':')[1].lstrip().split(' ')
+    ping_loss = pings.count("-") / config['ping_count']
     pings = [float(ping) for ping in pings if ping != '-']
 
     if len(pings) == 0:
@@ -32,7 +33,8 @@ def convert_to_point(line):
         'min=' + str(minimum),
         'avg=' + str(average),
         'max=' + str(maximum),
-        'sd=' + str(standard_deviation)
+        'sd=' + str(standard_deviation),
+        'loss=' + str(ping_loss)
     ]
 
     return(','.join(tags) + ' ' + ','.join(fields) + ' ' + str(timestamp))
