@@ -51,14 +51,14 @@ def post_to_influxdb():
         + '&precision=s',
         auth=(config['influxdb_connection']['username'],
               config['influxdb_connection']['password']),
-        data='\n'.join(points), verify=False
+        data='\n'.join(points)
     )
 
 
 # Load the configuration.
 
 config = yaml.safe_load(open(os.getenv('HOME')
-                             + '/.config/ping-logger/test.yaml'))
+                             + '/.config/ping-logger/config.yaml'))
 concatenated_hosts = '\n'.join(config['dest_hosts'])
 
 # Now run the test!
