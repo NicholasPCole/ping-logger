@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import re
 import requests
 import shutil
 import statistics
@@ -18,8 +19,8 @@ def post_to_influxdb():
     #
     # example.com : 3.56 1.88 - - - 1.18 1.28 1.39 4.67 1.27
     for line in fping_output_lines:
-        host = line.split(':')[0].rstrip()
-        responses = line.split(':')[1].lstrip().split(' ')
+        host = re.split(' +: +', line)[0]
+        responses = re.split(' +: +', line)[1].split(' ')
         pings = [float(response) for response in responses if response != '-']
 
         if len(pings) == 0:
