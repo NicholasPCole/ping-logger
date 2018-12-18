@@ -1,6 +1,6 @@
 # Ping logger
 
-This script pings a given list of hosts with `fping` and reports the measurements (minimum, mean, maximum, standard deviation) to an InfluxDB server, ideal for display in Grafana.
+This script pings a given list of hosts with `fping` and reports the measurements (mean, standard deviation, and packet loss) to an InfluxDB server, ideal for display in Grafana.
 
 ## Requirements
 

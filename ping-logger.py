@@ -26,9 +26,7 @@ def post_to_influxdb():
         if len(pings) == 0:
             continue
 
-        minimum = min(pings)
         average = "{0:.2f}".format(statistics.mean(pings))
-        maximum = max(pings)
         standard_deviation = "{0:.2f}".format(statistics.pstdev(pings))
         loss = responses.count("-") / config['ping_count']
 
@@ -38,9 +36,7 @@ def post_to_influxdb():
             'dest=' + host
         ]
         fields = [
-            'min=' + str(minimum),
             'avg=' + str(average),
-            'max=' + str(maximum),
             'sd=' + str(standard_deviation),
             'loss=' + str(loss)
         ]
@@ -55,14 +51,14 @@ def post_to_influxdb():
         + '&precision=s',
         auth=(config['influxdb_connection']['username'],
               config['influxdb_connection']['password']),
-        data='\n'.join(points)
+        data='\n'.join(points), verify=False
     )
 
 
 # Load the configuration.
 
 config = yaml.safe_load(open(os.getenv('HOME')
-                             + '/.config/ping-logger/config.yaml'))
+                             + '/.config/ping-logger/test.yaml'))
 concatenated_hosts = '\n'.join(config['dest_hosts'])
 
 # Now run the test!
