@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
+import influxdb
 import os
 import re
-import requests
 import shutil
 import statistics
 import subprocess
@@ -26,33 +26,22 @@ def post_to_influxdb():
         if len(pings) == 0:
             continue
 
-        average = "{0:.2f}".format(statistics.mean(pings))
-        standard_deviation = "{0:.2f}".format(statistics.pstdev(pings))
-        loss = responses.count("-") / config['ping_count']
+        points.append({
+            "time": time.strftime('%Y-%m-%dT%H:%M:%SZ', start_timestamp),
+            "measurement": "ping",
+            "tags": {
+                "src": config['src_host_name'],
+                "dest": host
+            },
+            "fields": {
+                "avg": round(statistics.mean(pings), 2),
+                "sd": round(statistics.pstdev(pings), 2),
+                "loss": round(responses.count("-") / config['ping_count'], 2)
+            }
+        })
 
-        tags = [
-            'ping',
-            'src=' + config['src_host_name'],
-            'dest=' + host
-        ]
-        fields = [
-            'avg=' + str(average),
-            'sd=' + str(standard_deviation),
-            'loss=' + str(loss)
-        ]
-
-        points.append(','.join(tags) + ' ' + ','.join(fields)
-                      + ' ' + str(timestamp))
-
-    requests.post(
-        config['influxdb_connection']['server']
-        + '/write?db='
-        + config['influxdb_connection']['database']
-        + '&precision=s',
-        auth=(config['influxdb_connection']['username'],
-              config['influxdb_connection']['password']),
-        data='\n'.join(points)
-    )
+    client = influxdb.InfluxDBClient(**config['influxdb'])
+    client.write_points(points, time_precision='s')
 
 
 # Load the configuration.
@@ -63,7 +52,7 @@ concatenated_hosts = '\n'.join(config['dest_hosts'])
 
 # Now run the test!
 
-timestamp = int(time.time())
+start_timestamp = time.gmtime()
 fping_run = subprocess.run([shutil.which('fping'), '-C',
                            str(config['ping_count']), '-q', '-R'],
                            input=concatenated_hosts, stdout=subprocess.PIPE,

@@ -4,7 +4,7 @@ This script pings a given list of hosts with `fping` and reports the measurement
 
 ## Requirements
 
-* Python 3: `os`, `requests`, `shutils`, `statistics`, `subprocess`, `time`, and `yaml` modules.
+* Python 3: `influxdb`, `os`, `re`, `shutil`, `statistics`, `subprocess`, `time`, and `yaml` modules.
 * [fping](https://fping.org/) package to run ping
 * InfluxDB server to receive and store data
 * (optional) Grafana installation to graph data
@@ -13,9 +13,9 @@ This script pings a given list of hosts with `fping` and reports the measurement
 
 ### Configuration file
 
-Copy `config.yaml.default` to `~/.config/ping-logger/config.yaml` and fill in each of the settings in the new file.
+Copy `config.yaml.default` to `~/.config/ping-logger/config.yaml` and fill in the appropriate settings in the new file.
 
-All settings are required, and some examples are given for `influxdb_connection['server']` and `dest_hosts` to demonstrate the input format. `src_host_name` is used to help identify multiple running instances of the script on different servers.
+The InfluxDB settings are defined in the [InfluxDBClient documentation](https://influxdb-python.readthedocs.io/en/latest/api-documentation.html#influxdbclient) and passed through as keyword arguments, and some examples are given for `influxdb['host']` and `dest_hosts` to demonstrate the input format. `src_host_name` is used to help identify multiple running instances of the script on different servers.
 
 ### Cron job
 
@@ -32,4 +32,4 @@ The following schema is used:
 * Database name: defined in `config.yaml`
 * Measurement name: `ping`
 * Tag keys: `src`, `dest`
-* Field keys: `avg`, `loss`, `max`, `min`, `sd`
+* Field keys: `avg`, `sd`, `loss`
