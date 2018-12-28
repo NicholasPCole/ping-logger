@@ -4,7 +4,7 @@ This script pings a given list of hosts with `fping` and reports the measurement
 
 ## Requirements
 
-* Python 3: `influxdb`, `os`, `re`, `shutil`, `statistics`, `subprocess`, `time`, and `yaml` modules.
+* Python 3: `argparse`,  `influxdb`, `re`, `shutil`, `statistics`, `subprocess`, `time`, `xdg`, and `yaml` modules.
 * [fping](https://fping.org/) package to run ping
 * InfluxDB server to receive and store data
 * (optional) Grafana installation to graph data
@@ -13,7 +13,9 @@ This script pings a given list of hosts with `fping` and reports the measurement
 
 ### Configuration file
 
-Copy `config.yaml.default` to `~/.config/ping-logger/config.yaml` and fill in the appropriate settings in the new file.
+A YAML file is used to store connection details for the InfluxDB server as well as what servers to monitor with `fping`. A sample default file is provided in this repository and should be copied and modified for your environment.
+
+The file at `$XDG_CONFIG_HOME/ping-logger/config.yaml` is used by default but a different file can be specified with the `-c` or `--config` argument.
 
 The InfluxDB settings are defined in the [InfluxDBClient documentation](https://influxdb-python.readthedocs.io/en/latest/api-documentation.html#influxdbclient) and passed through as keyword arguments, and some examples are given for `influxdb['host']` and `dest_hosts` to demonstrate the input format. `src_host_name` is used to help identify multiple running instances of the script on different servers.
 
