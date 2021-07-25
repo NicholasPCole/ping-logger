@@ -50,7 +50,7 @@ def post_to_influxdb():
 parser = argparse.ArgumentParser(
     description='Ping a list of servers and record performance data')
 parser.add_argument('-c', '--config',
-                    default=XDG_CONFIG_HOME + '/ping-logger/config.yaml',
+                    default=str(XDG_CONFIG_HOME) + '/ping-logger/config.yaml',
                     help=('Configuration file (default is '
                           '$XDG_CONFIG_HOME/ping-logger/config.py)'))
 arguments = parser.parse_args()
