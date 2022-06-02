@@ -6,7 +6,8 @@ influxdb:
     ssl: True
     verify_ssl: True
 ping_count: 10
-src_host_name:
+tags:
+  src: example-client
 dest_hosts:
   example.com:
     additional_tags:

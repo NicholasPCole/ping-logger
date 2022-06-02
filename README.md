@@ -19,6 +19,8 @@ The file at `$XDG_CONFIG_HOME/ping-logger/config.yaml` is used by default but a 
 
 The InfluxDB settings are defined in the [InfluxDBClient documentation](https://influxdb-python.readthedocs.io/en/latest/api-documentation.html#influxdbclient) and passed through as keyword arguments, and some examples are given for `influxdb['host']` and `dest_hosts` to demonstrate the input format. `src_host_name` is used to help identify multiple running instances of the script on different servers.
 
+A set of tags can be added to all points with an associative array under the top-level `tags` key. An example of this is to set the hostname of the source server (`src`).
+
 Additional tags can be added on a per-host basis with the optional `additional_tags` associative array.
 
 ### Cron job

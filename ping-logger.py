@@ -28,10 +28,12 @@ def post_to_influxdb():
             "time": time.strftime('%Y-%m-%dT%H:%M:%SZ', start_timestamp),
             "measurement": "ping",
             "tags": {
-                "src": config['src_host_name'],
                 "dest": host
             }
         }
+
+        if 'tags' in config:
+            point_dict['tags'].update(config['tags'])
 
         if 'additional_tags' in config['dest_hosts'][host]:
             point_dict['tags'].update(
