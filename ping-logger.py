@@ -24,22 +24,27 @@ def post_to_influxdb():
         responses = re.split(' +: +', line)[1].split(' ')
         pings = [float(response) for response in responses if response != '-']
 
-        if len(pings) == 0:
-            continue
-
-        points.append({
+        point_dict = {
             "time": time.strftime('%Y-%m-%dT%H:%M:%SZ', start_timestamp),
             "measurement": "ping",
             "tags": {
                 "src": config['src_host_name'],
                 "dest": host
-            },
-            "fields": {
+            }
+        }
+
+        if len(pings) == 0:
+            point_dict['fields'] = {
+                "loss": 1.0
+            }
+        else:
+            point_dict['fields'] = {
                 "avg": round(statistics.mean(pings), 2),
                 "sd": round(statistics.pstdev(pings), 2),
                 "loss": round(responses.count("-") / config['ping_count'], 2)
             }
-        })
+
+        points.append(point_dict)
 
     client = influxdb.InfluxDBClient(**config['influxdb'])
     client.write_points(points, time_precision='s')
