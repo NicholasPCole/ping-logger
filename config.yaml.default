@@ -8,6 +8,12 @@ influxdb:
 ping_count: 10
 src_host_name:
 dest_hosts:
-  - example.com
-  - example.net
-  - example.org
+  example.com:
+    additional_tags:
+      application: example
+      environment: production
+  example.net:
+    additional_tags:
+      application: example
+      environment: test
+  192.0.2.1: {}

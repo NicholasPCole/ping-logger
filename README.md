@@ -19,6 +19,8 @@ The file at `$XDG_CONFIG_HOME/ping-logger/config.yaml` is used by default but a 
 
 The InfluxDB settings are defined in the [InfluxDBClient documentation](https://influxdb-python.readthedocs.io/en/latest/api-documentation.html#influxdbclient) and passed through as keyword arguments, and some examples are given for `influxdb['host']` and `dest_hosts` to demonstrate the input format. `src_host_name` is used to help identify multiple running instances of the script on different servers.
 
+Additional tags can be added on a per-host basis with the optional `additional_tags` associative array.
+
 ### Cron job
 
 The schedule can, of course, be modified. To run the script every minute, for example:
@@ -33,5 +35,5 @@ The following schema is used:
 
 * Database name: defined in `config.yaml`
 * Measurement name: `ping`
-* Tag keys: `src`, `dest`
+* Tag keys: `src`, `dest`, and any additional tags defined per host
 * Field keys: `avg`, `sd`, `loss`

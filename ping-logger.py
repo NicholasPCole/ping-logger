@@ -33,6 +33,10 @@ def post_to_influxdb():
             }
         }
 
+        if 'additional_tags' in config['dest_hosts'][host]:
+            point_dict['tags'].update(
+                config['dest_hosts'][host]['additional_tags'])
+
         if len(pings) == 0:
             point_dict['fields'] = {
                 "loss": 1.0
@@ -60,7 +64,7 @@ parser.add_argument('-c', '--config',
                           '$XDG_CONFIG_HOME/ping-logger/config.py)'))
 arguments = parser.parse_args()
 config = yaml.safe_load(open(arguments.config))
-concatenated_hosts = '\n'.join(config['dest_hosts'])
+concatenated_hosts = '\n'.join(config['dest_hosts'].keys())
 
 # Now run the test!
 
