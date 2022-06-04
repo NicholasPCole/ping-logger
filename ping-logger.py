@@ -54,8 +54,6 @@ def post_to_influxdb():
                 "loss": round(responses.count("-") / config['ping_count'], 2)
             }
 
-        points.append(point_dict)
-
         write_client.write(bucket=config['influxdb']['bucket'],
                            record=point_dict,
                            write_precision=WritePrecision.S)
