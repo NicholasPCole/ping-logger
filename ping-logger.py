@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
-import influxdb
+from influxdb_client import InfluxDBClient, WritePrecision
 import re
 import shutil
 import statistics
@@ -14,7 +14,11 @@ import yaml
 def post_to_influxdb():
     """Formats fping output and posts it to an InfluxDB server."""
 
-    points = []
+    client = InfluxDBClient(url=config['influxdb']['url'],
+                            token=config['influxdb']['token'],
+                            org=config['influxdb']['org'],
+                            verify_ssl=config['influxdb']['verify_ssl'])
+    write_client = client.write_api()
 
     # An example fping output line looks like this:
     #
@@ -52,9 +56,11 @@ def post_to_influxdb():
 
         points.append(point_dict)
 
-    client = influxdb.InfluxDBClient(**config['influxdb'])
-    client.write_points(points, time_precision='s')
+        write_client.write(bucket=config['influxdb']['bucket'],
+                           record=point_dict,
+                           write_precision=WritePrecision.S)
 
+    write_client.close()
 
 # Load the configuration.
 

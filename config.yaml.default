@@ -1,10 +1,9 @@
 influxdb:
-    host: example.com
-    username:
-    password:
-    database:
-    ssl: True
-    verify_ssl: True
+  url: example.com
+  org:
+  token:
+  bucket:
+  verify_ssl: True
 ping_count: 10
 tags:
   src: example-client
